@@ -24,8 +24,25 @@ def create_app():
     app.config["SECRET_KEY"] = SECRET_KEY
     app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
 
-    # Enable CORS for frontend flexibility
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    # Allowed origins: local dev + production Netlify frontend
+    ALLOWED_ORIGINS = [
+        "https://omnicloud1.netlify.app",
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost",
+        "http://127.0.0.1",
+    ]
+
+    # Enable CORS for all routes with explicit origin list
+    CORS(
+        app,
+        resources={r"/*": {"origins": ALLOWED_ORIGINS}},
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    )
 
     # Initialize SQLite database
     init_db()

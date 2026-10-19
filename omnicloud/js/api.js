@@ -5,9 +5,33 @@
 
 class OmniCloudAPI {
   constructor() {
-    // Detect API origin: use current origin if served by Flask, otherwise localhost:5000
-    const isServedByBackend = window.location.port === '5000' || window.location.pathname.startsWith('/api');
-    this.baseUrl = isServedByBackend ? window.location.origin : 'http://localhost:5000';
+    // ── Backend URL Configuration ────────────────────────────────────────────
+    // When running locally (Flask serves both frontend + API on port 5000),
+    // use the current origin.
+    // When hosted on Netlify (or any external domain), point to your
+    // deployed Python backend. Change OMNICLOUD_BACKEND_URL below if needed.
+    const OMNICLOUD_BACKEND_URL = ''; // e.g. 'https://your-backend.railway.app'
+
+    const isLocalFlask = window.location.port === '5000' ||
+                         window.location.hostname === '127.0.0.1' ||
+                         window.location.hostname === 'localhost';
+    const isNetlify    = window.location.hostname === 'omnicloud1.netlify.app';
+
+    if (OMNICLOUD_BACKEND_URL) {
+      // Explicit override always wins
+      this.baseUrl = OMNICLOUD_BACKEND_URL.replace(/\/$/, '');
+    } else if (isLocalFlask) {
+      // Local dev: Flask is serving both the page and the API
+      this.baseUrl = window.location.origin;
+    } else if (isNetlify) {
+      // Netlify deployment: API is on a separate server.
+      // Set OMNICLOUD_BACKEND_URL above once you have a deployed backend.
+      this.baseUrl = 'http://localhost:5000'; // fallback for testing via Netlify
+    } else {
+      this.baseUrl = window.location.origin;
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     this.isOnline = false;
     this.serverInfo = null;
     this.onStatusChange = null;
