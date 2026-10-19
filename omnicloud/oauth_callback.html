@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniCloud — Authenticating...</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0d14;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .card {
+      background: #111625;
+      border: 1px solid rgba(0,242,254,0.2);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      max-width: 380px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0,242,254,0.08);
+    }
+    .logo { font-size: 2.5rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; color: #00f2fe; }
+    p  { font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem; }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(0,242,254,0.15);
+      border-top-color: #00f2fe;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1.2rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .success { color: #10b981; }
+    .error   { color: #ff4757; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">☁️</div>
+    <div class="spinner" id="spinner"></div>
+    <h2 id="status-title">Authenticating...</h2>
+    <p  id="status-msg">Please wait while we complete your sign-in.</p>
+  </div>
+
+  <script>
+    /**
+     * OAuth 2.0 Implicit / PKCE Callback Handler
+     *
+     * Supports:
+     *  - Implicit flow: token in URL hash (#access_token=...)
+     *  - Authorization Code + PKCE: code in URL query (?code=...)
+     *  - Error handling: ?error=...
+     */
+    (function () {
+      const title  = document.getElementById('status-title');
+      const msg    = document.getElementById('status-msg');
+      const spin   = document.getElementById('spinner');
+
+      // Parse both hash and query params
+      const hash   = new URLSearchParams(window.location.hash.replace('#', ''));
+      const params = new URLSearchParams(window.location.search);
+
+      const accessToken = hash.get('access_token') || params.get('access_token');
+      const code        = params.get('code');
+      const error       = params.get('error') || hash.get('error');
+      const state       = params.get('state') || hash.get('state');
+
+      function sendToOpener(payload) {
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage(payload, window.location.origin);
+        }
+      }
+
+      if (error) {
+        spin.style.display = 'none';
+        title.textContent = 'Authentication Failed';
+        title.className = 'error';
+        msg.textContent = decodeURIComponent(error.replace(/_/g, ' '));
+        sendToOpener({ type: 'OMNICLOUD_OAUTH_ERROR', error, state });
+        setTimeout(() => window.close(), 3000);
+        return;
+      }
+
+      if (accessToken) {
+        // Implicit flow — we already have the token
+        spin.style.display = 'none';
+        title.textContent = 'Signed In Successfully!';
+        title.className = 'success';
+        msg.textContent = 'Importing your files... this window will close.';
+        sendToOpener({ type: 'OMNICLOUD_OAUTH_TOKEN', access_token: accessToken, state });
+        setTimeout(() => window.close(), 1500);
+        return;
+      }
+
+      if (code) {
+        // Authorization Code flow — for PKCE we'd exchange here, but since we're
+        // client-only we just pass the code to the opener and let it display instructions.
+        spin.style.display = 'none';
+        title.textContent = 'Code Received';
+        title.className = 'success';
+        msg.textContent = 'Authorization complete. Closing window...';
+        sendToOpener({ type: 'OMNICLOUD_OAUTH_CODE', code, state });
+        setTimeout(() => window.close(), 1500);
+        return;
+      }
+
+      // Nothing found — generic fallback
+      spin.style.display = 'none';
+      title.textContent = 'Nothing to Process';
+      msg.textContent = 'No token or code was found in the redirect URL.';
+      setTimeout(() => window.close(), 3000);
+    })();
+  </script>
+</body>
+</html>

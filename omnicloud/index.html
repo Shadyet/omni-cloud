@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="OmniCloud - Unified Cloud Storage Management & Cross-Cloud Sync Hub. Control Google Drive, Dropbox, OneDrive, AWS S3, Box, and Mega in one dashboard.">
+  <title>OmniCloud | Unified Cloud Storage Hub</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Phosphor Icons CDN (Script + Stylesheet) -->
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css?v=3.0">
+
+  <style>
+    /* Critical Windows 11 Explorer Layout Fallbacks */
+    .windows-explorer-window {
+      background: var(--bg-card, #111625);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 580px;
+    }
+
+    .win-command-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 1rem;
+      background: var(--bg-tertiary, #161c2e);
+      border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    }
+
+    .win-nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .win-icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted, #94a3b8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .win-icon-btn:hover:not(:disabled) {
+      background: var(--bg-card, #111625);
+      border-color: var(--border-color, rgba(255, 255, 255, 0.15));
+      color: #fff;
+    }
+
+    .win-icon-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .win-address-bar-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--bg-secondary, #0a0d14);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 6px;
+      padding: 0.35rem 0.65rem;
+    }
+
+    .win-address-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .win-breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.85rem;
+    }
+
+    .win-breadcrumb-item {
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-muted, #94a3b8);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .win-breadcrumb-item:hover {
+      color: #00f2fe;
+      background: rgba(0, 242, 254, 0.08);
+    }
+
+    .win-breadcrumb-item.active {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .win-breadcrumb-sep {
+      color: #64748b;
+      font-size: 0.75rem;
+    }
+
+    .win-search-box {
+      position: relative;
+      width: 240px;
+      display: flex;
+      align-items: center;
+    }
+
+    .win-search-box i {
+      position: absolute;
+      left: 0.65rem;
+      color: #64748b;
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    .win-search-box input {
+      width: 100%;
+      background: var(--bg-secondary, #0a0d14);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 6px;
+      padding: 0.4rem 1.8rem 0.4rem 2rem;
+      font-size: 0.82rem;
+      color: #fff;
+      outline: none;
+    }
+
+    .win-action-ribbon {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 1rem;
+      background: var(--bg-secondary, #0a0d14);
+      border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+      flex-wrap: wrap;
+    }
+
+    .win-ribbon-group {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .win-ribbon-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 0 0.25rem;
+    }
+
+    .win-action-btn {
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted, #94a3b8);
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .win-action-btn:hover:not(:disabled) {
+      background: var(--bg-tertiary, #161c2e);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .win-action-btn.primary {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: rgba(0, 242, 254, 0.3);
+      color: #00f2fe;
+      font-weight: 600;
+    }
+
+    .win-action-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .win-view-switcher {
+      display: flex;
+      background: var(--bg-tertiary, #161c2e);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+    .win-view-btn {
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .win-view-btn.active {
+      background: var(--bg-card, #111625);
+      color: #00f2fe;
+    }
+
+    .win-dropdown-wrapper {
+      position: relative;
+    }
+
+    .win-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      background: #111625;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      padding: 0.3rem;
+      min-width: 170px;
+      z-index: 100;
+      display: none;
+    }
+
+    .win-dropdown-menu.show {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .win-dropdown-item {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .win-dropdown-item:hover {
+      background: #161c2e;
+      color: #fff;
+    }
+
+    .win-dropdown-item.active {
+      color: #00f2fe;
+      font-weight: 600;
+    }
+
+    .win-dropdown-item.active::after {
+      content: '✓';
+    }
+
+    .win-dropdown-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 0.25rem 0;
+    }
+
+    .win-explorer-body {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      flex: 1;
+      min-height: 460px;
+    }
+
+    @media (max-width: 900px) {
+      .win-explorer-body {
+        grid-template-columns: 1fr;
+      }
+
+      .win-nav-tree-pane {
+        display: none;
+      }
+    }
+
+    .win-nav-tree-pane {
+      background: var(--bg-secondary, #0a0d14);
+      border-right: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+      padding: 0.75rem 0.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .win-tree-header {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      padding: 0.3rem 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    .win-tree-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .win-tree-node {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.45rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .win-tree-node:hover {
+      background: #161c2e;
+      color: #fff;
+    }
+
+    .win-tree-node.active {
+      background: rgba(0, 242, 254, 0.1);
+      color: #00f2fe;
+      font-weight: 600;
+    }
+
+    .win-node-badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      background: #161c2e;
+      padding: 1px 6px;
+      border-radius: 10px;
+      color: #64748b;
+    }
+
+    .win-tree-node.active .win-node-badge {
+      background: rgba(0, 242, 254, 0.2);
+      color: #00f2fe;
+    }
+
+    .win-main-content-pane {
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      background: var(--bg-primary, #05070c);
+    }
+
+    .win-drop-banner {
+      border: 1.5px dashed var(--border-color, rgba(255, 255, 255, 0.15));
+      background: rgba(0, 242, 254, 0.02);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      cursor: pointer;
+    }
+
+    .win-drop-banner:hover {
+      border-color: #00f2fe;
+      background: rgba(0, 242, 254, 0.05);
+    }
+
+    .win-drop-banner i {
+      font-size: 1.6rem;
+      color: #00f2fe;
+    }
+
+    .win-files-container {
+      flex: 1;
+      outline: none;
+      min-height: 280px;
+    }
+
+    .win-files-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .win-file-item {
+      background: var(--bg-card, #111625);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+      border-radius: 8px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .win-file-item:hover {
+      background: #161c2e;
+      border-color: rgba(0, 242, 254, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .win-file-item.selected {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: #00f2fe;
+    }
+
+    .win-file-checkbox {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #161c2e;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: #00f2fe;
+      z-index: 2;
+    }
+
+    .win-file-item:hover .win-file-checkbox,
+    .win-file-item.selected .win-file-checkbox {
+      display: flex;
+    }
+
+    .win-file-item.selected .win-file-checkbox {
+      background: #00f2fe;
+      color: #000;
+      border-color: #00f2fe;
+    }
+
+    .win-file-thumb {
+      height: 95px;
+      border-radius: 6px;
+      background: #161c2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .win-file-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .win-file-thumb i {
+      font-size: 2.5rem;
+    }
+
+    .win-file-provider-badge {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: #fff;
+    }
+
+    .win-file-name {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .win-file-subtext {
+      font-size: 0.72rem;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .win-files-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .win-files-table th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+    }
+
+    .win-files-table th:hover {
+      color: #00f2fe;
+    }
+
+    .win-files-table td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+    }
+
+    .win-files-table tr {
+      cursor: pointer;
+    }
+
+    .win-files-table tr:hover {
+      background: #161c2e;
+    }
+
+    .win-files-table tr.selected {
+      background: rgba(0, 242, 254, 0.1);
+      color: #00f2fe;
+    }
+
+    .win-files-tiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .win-tile-item {
+      background: var(--bg-card, #111625);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+    }
+
+    .win-tile-item:hover {
+      background: #161c2e;
+      border-color: rgba(0, 242, 254, 0.4);
+    }
+
+    .win-tile-item.selected {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: #00f2fe;
+    }
+
+    .win-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.4rem 1rem;
+      background: var(--bg-tertiary, #161c2e);
+      border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .win-status-left,
+    .win-status-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .win-status-sep {
+      opacity: 0.4;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="ph ph-cloud-arrow-up"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">OmniCloud</span>
+          <span class="brand-badge">Storage Hub</span>
+        </div>
+      </div>
+
+      <button class="quick-upload-btn" onclick="document.getElementById('real-file-input').click()">
+        <i class="ph ph-plus-circle" style="font-size: 1.2rem;"></i>
+        <span>Upload File</span>
+      </button>
+
+      <input type="file" id="real-file-input" style="display: none;" multiple />
+
+      <div class="nav-section-title">Overview</div>
+      <ul class="nav-list">
+        <li class="nav-item active" data-view="dashboard">
+          <div class="nav-item-left">
+            <i class="ph ph-squares-four"></i>
+            <span>Dashboard</span>
+          </div>
+        </li>
+        <li class="nav-item" data-view="explorer">
+          <div class="nav-item-left">
+            <i class="ph ph-folder-open"></i>
+            <span>All Files</span>
+          </div>
+          <span class="nav-badge">Sync</span>
+        </li>
+        <li class="nav-item" data-view="transfers">
+          <div class="nav-item-left">
+            <i class="ph ph-arrows-left-right"></i>
+            <span>Transfer Studio</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="nav-section-title">Management</div>
+      <ul class="nav-list">
+        <li class="nav-item" data-view="accounts">
+          <div class="nav-item-left">
+            <i class="ph ph-cloud-check"></i>
+            <span>Cloud Accounts</span>
+          </div>
+        </li>
+        <li class="nav-item" data-view="security">
+          <div class="nav-item-left">
+            <i class="ph ph-shield-check"></i>
+            <span>Security Vault</span>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Sidebar Storage Widget -->
+      <div class="sidebar-storage-widget">
+        <div class="storage-widget-header">
+          <span>Aggregate Storage</span>
+          <i class="ph ph-database" style="color: var(--accent-cyan);"></i>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="sidebar-storage-fill" style="width: 0%;"></div>
+        </div>
+        <div class="storage-widget-footer" id="sidebar-storage-text">
+          Calculating storage...
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="search-bar">
+          <i class="ph ph-magnifying-glass" style="color: var(--text-dim);"></i>
+          <input type="text" id="global-search-input" placeholder="Search files across all connected clouds..." />
+        </div>
+
+        <div class="header-actions">
+          <!-- Python Backend Status Pill -->
+          <div class="backend-status-badge online" id="backend-status-badge" title="OmniCloud Python Backend">
+            <span class="backend-status-dot" id="backend-status-dot"></span>
+            <span class="backend-status-text" id="backend-status-text">Python Backend</span>
+          </div>
+
+          <button class="icon-btn" id="theme-toggle-btn" title="Toggle Theme">
+            <i class="ph ph-sun"></i>
+          </button>
+
+          <button class="icon-btn" id="notifications-btn" title="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="notification-dot"></span>
+          </button>
+
+          <div class="user-profile" id="user-profile-btn" title="Account">
+            <div class="user-avatar" id="user-avatar">AD</div>
+            <span class="user-name" id="user-name">Alex Dev</span>
+            <i class="ph ph-caret-down" style="font-size:0.7rem; color:var(--text-dim);"></i>
+          </div>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profile-dropdown">
+            <div class="profile-dropdown-header">
+              <div class="profile-dropdown-avatar" id="profile-dropdown-avatar">AD</div>
+              <div>
+                <div class="profile-dropdown-name" id="profile-dropdown-name">Alex Dev</div>
+                <div class="profile-dropdown-email" id="profile-dropdown-email">alex.dev@gmail.com</div>
+              </div>
+            </div>
+            <div class="profile-dropdown-divider"></div>
+            <div class="profile-dropdown-item" id="pd-settings">
+              <i class="ph ph-gear"></i> Account Settings
+            </div>
+            <div class="profile-dropdown-item" id="pd-signin" style="display:none;">
+              <i class="ph ph-sign-in"></i> Sign In
+            </div>
+            <div class="profile-dropdown-item danger" id="pd-signout">
+              <i class="ph ph-sign-out"></i> Sign Out
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Views -->
+      <main class="content-body">
+
+        <!-- Panel 1: Dashboard -->
+        <section class="view-panel active" id="panel-dashboard">
+          <div class="dashboard-grid">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title"><i class="ph ph-cloud" style="color: var(--accent-cyan);"></i> Cloud Providers
+                </h1>
+                <p class="section-subtitle">Real-time connection status and quota usage across your linked cloud
+                  accounts.</p>
+              </div>
+              <div style="display: flex; gap: 0.75rem;">
+                <button class="btn-secondary" id="scan-drive-btn"
+                  style="border-color: var(--accent-cyan); color: var(--accent-cyan);">
+                  <i class="ph ph-hard-drive"></i> Scan Computer Drive
+                </button>
+                <button class="btn-primary" id="connect-provider-btn">
+                  <i class="ph ph-plug"></i> Connect Account
+                </button>
+              </div>
+            </div>
+
+            <!-- Provider Cards Container -->
+            <div class="provider-cards-container" id="provider-cards-container">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- Analytics Dual Grid -->
+            <div class="analytics-grid">
+              <div class="glass-panel">
+                <div class="chart-header">
+                  <h3 class="section-title" style="font-size: 1.1rem;"><i class="ph ph-chart-donut"
+                      style="color: var(--accent-purple);"></i> Storage Distribution</h3>
+                  <span style="font-size: 0.8rem; color: var(--text-dim);">By Provider</span>
+                </div>
+                <div class="chart-body" id="storage-donut-chart">
+                  <!-- Dynamic SVG Donut -->
+                </div>
+              </div>
+
+              <div class="glass-panel">
+                <div class="chart-header">
+                  <h3 class="section-title" style="font-size: 1.1rem;"><i class="ph ph-files"
+                      style="color: var(--accent-blue);"></i> File Types</h3>
+                  <span style="font-size: 0.8rem; color: var(--text-dim);">Category Breakdown</span>
+                </div>
+                <div class="chart-body" id="file-type-breakdown-chart">
+                  <!-- Dynamic Category Bars -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel 2: Windows 11 Style File Explorer -->
+        <section class="view-panel" id="panel-explorer">
+          <div class="windows-explorer-window">
+
+            <!-- Windows Command Ribbon / Navigation Bar -->
+            <div class="win-command-bar">
+              <div class="win-nav-buttons">
+                <button type="button" class="win-icon-btn" id="win-btn-back" title="Back (Alt+Left)"><i
+                    class="ph ph-arrow-left"></i></button>
+                <button type="button" class="win-icon-btn" id="win-btn-forward" title="Forward (Alt+Right)"><i
+                    class="ph ph-arrow-right"></i></button>
+                <button type="button" class="win-icon-btn" id="win-btn-up" title="Up to Parent Folder (Alt+Up)"><i
+                    class="ph ph-arrow-up"></i></button>
+                <button type="button" class="win-icon-btn" id="win-btn-refresh" title="Refresh (F5)"><i
+                    class="ph ph-arrows-clockwise"></i></button>
+              </div>
+
+              <!-- Windows Address Bar with Breadcrumbs -->
+              <div class="win-address-bar-container">
+                <div class="win-address-bar" id="win-address-bar">
+                  <i class="ph ph-folder" style="color: var(--accent-cyan); font-size: 1.1rem;"></i>
+                  <div class="win-breadcrumbs" id="win-breadcrumbs">
+                    <span class="win-breadcrumb-item" data-path="/"><i class="ph ph-desktop"></i> This PC</span>
+                  </div>
+                </div>
+                <button type="button" class="win-icon-btn" id="win-btn-copy-path" title="Copy Path"><i
+                    class="ph ph-copy"></i></button>
+              </div>
+
+              <!-- Search Box -->
+              <div class="win-search-box">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="win-search-input" placeholder="Search files &amp; folders..."
+                  autocomplete="off" />
+                <button type="button" class="win-search-clear" id="win-search-clear" style="display:none;"><i
+                    class="ph ph-x"></i></button>
+              </div>
+            </div>
+
+            <!-- Windows Action Ribbon -->
+            <div class="win-action-ribbon">
+              <div class="win-ribbon-group">
+                <button type="button" class="win-action-btn primary" id="win-btn-new-folder"
+                  title="New Folder (Ctrl+Shift+N)">
+                  <i class="ph ph-folder-plus"></i> <span>New Folder</span>
+                </button>
+                <button type="button" class="win-action-btn" id="win-btn-upload"
+                  onclick="document.getElementById('real-file-input').click()" title="Upload File">
+                  <i class="ph ph-upload-simple"></i> <span>Upload</span>
+                </button>
+              </div>
+
+              <div class="win-ribbon-divider"></div>
+
+              <div class="win-ribbon-group">
+                <button type="button" class="win-action-btn" id="win-btn-cut" title="Cut (Ctrl+X)" disabled>
+                  <i class="ph ph-scissors"></i> <span>Cut</span>
+                </button>
+                <button type="button" class="win-action-btn" id="win-btn-copy" title="Copy (Ctrl+C)" disabled>
+                  <i class="ph ph-copy"></i> <span>Copy</span>
+                </button>
+                <button type="button" class="win-action-btn" id="win-btn-paste" title="Paste (Ctrl+V)" disabled>
+                  <i class="ph ph-clipboard"></i> <span>Paste</span>
+                </button>
+                <button type="button" class="win-action-btn" id="win-btn-rename" title="Rename (F2)" disabled>
+                  <i class="ph ph-pencil-simple"></i> <span>Rename</span>
+                </button>
+                <button type="button" class="win-action-btn danger" id="win-btn-delete" title="Delete (Del)" disabled>
+                  <i class="ph ph-trash"></i> <span>Delete</span>
+                </button>
+                <button type="button" class="win-action-btn" id="win-btn-star" title="Star / Favorite" disabled>
+                  <i class="ph ph-star"></i> <span>Star</span>
+                </button>
+                <button type="button" class="win-action-btn" id="win-btn-download" title="Download" disabled>
+                  <i class="ph ph-download-simple"></i> <span>Download</span>
+                </button>
+              </div>
+
+              <div class="win-ribbon-divider"></div>
+
+              <!-- Sort & View Controls -->
+              <div class="win-ribbon-group" style="margin-left: auto;">
+                <div class="win-dropdown-wrapper">
+                  <button type="button" class="win-action-btn" id="win-sort-dropdown-btn">
+                    <i class="ph ph-arrows-down-up"></i> <span id="win-sort-label">Sort: Name</span> <i
+                      class="ph ph-caret-down" style="font-size: 0.75rem;"></i>
+                  </button>
+                  <div class="win-dropdown-menu" id="win-sort-menu">
+                    <div class="win-dropdown-item active" data-sort="name">Name</div>
+                    <div class="win-dropdown-item" data-sort="date">Date Modified</div>
+                    <div class="win-dropdown-item" data-sort="type">Type</div>
+                    <div class="win-dropdown-item" data-sort="size">Size</div>
+                    <div class="win-dropdown-divider"></div>
+                    <div class="win-dropdown-item active" data-order="asc">Ascending (A-Z)</div>
+                    <div class="win-dropdown-item" data-order="desc">Descending (Z-A)</div>
+                  </div>
+                </div>
+
+                <div class="win-view-switcher">
+                  <button type="button" class="win-view-btn active" data-view="grid" title="Large Icons / Grid"><i
+                      class="ph ph-grid-four"></i></button>
+                  <button type="button" class="win-view-btn" data-view="details" title="Details List"><i
+                      class="ph ph-list-dashes"></i></button>
+                  <button type="button" class="win-view-btn" data-view="tiles" title="Tiles View"><i
+                      class="ph ph-squares-four"></i></button>
+                </div>
+
+                <button type="button" class="win-action-btn" id="win-btn-properties" title="File Properties (Alt+Enter)"
+                  disabled>
+                  <i class="ph ph-info"></i> <span>Properties</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Windows 2-Pane Split Explorer -->
+            <div class="win-explorer-body">
+
+              <!-- Left Sidebar: Windows Navigation Tree -->
+              <aside class="win-nav-tree-pane" id="win-nav-tree-pane">
+
+                <!-- Quick Access Section -->
+                <div class="win-tree-section">
+                  <div class="win-tree-header"><i class="ph ph-star" style="color: #f59e0b;"></i> Quick Access</div>
+                  <div class="win-tree-items">
+                    <div class="win-tree-node active" data-nav="all" data-provider="all" data-type="all">
+                      <i class="ph ph-desktop" style="color: var(--accent-cyan);"></i>
+                      <span>This PC (All Storage)</span>
+                      <span class="win-node-badge" id="tree-count-all">0</span>
+                    </div>
+                    <div class="win-tree-node" data-nav="documents" data-type="document">
+                      <i class="ph ph-file-text" style="color: #3b82f6;"></i>
+                      <span>Documents</span>
+                      <span class="win-node-badge" id="tree-count-doc">0</span>
+                    </div>
+                    <div class="win-tree-node" data-nav="pictures" data-type="image">
+                      <i class="ph ph-image" style="color: #10b981;"></i>
+                      <span>Pictures</span>
+                      <span class="win-node-badge" id="tree-count-img">0</span>
+                    </div>
+                    <div class="win-tree-node" data-nav="videos" data-type="video">
+                      <i class="ph ph-video" style="color: #f43f5e;"></i>
+                      <span>Videos</span>
+                      <span class="win-node-badge" id="tree-count-vid">0</span>
+                    </div>
+                    <div class="win-tree-node" data-nav="starred" data-type="starred">
+                      <i class="ph ph-star-fill" style="color: #f59e0b;"></i>
+                      <span>Starred Files</span>
+                      <span class="win-node-badge" id="tree-count-star">0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Cloud & Storage Drives Section -->
+                <div class="win-tree-section">
+                  <div class="win-tree-header"><i class="ph ph-cloud" style="color: var(--accent-cyan);"></i> Cloud
+                    &amp; Local Drives</div>
+                  <div class="win-tree-items" id="win-tree-drives-list">
+                    <!-- Populated dynamically based on connected drives -->
+                  </div>
+                </div>
+
+              </aside>
+
+              <!-- Right Main Pane: Files & Folders -->
+              <main class="win-main-content-pane" id="win-main-content-pane">
+
+                <!-- Quick Drop / Upload Banner -->
+                <div class="win-drop-banner" id="upload-drop-zone"
+                  onclick="document.getElementById('real-file-input').click()">
+                  <i class="ph ph-cloud-arrow-up"></i>
+                  <div>
+                    <div style="font-weight:600; color:var(--text-main); font-size:0.88rem;">Drag &amp; drop files here
+                      to upload</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim);">Files will be synced and stored securely
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Files Container (Grid / Details / Tiles) -->
+                <div id="files-container" class="win-files-container" tabindex="0">
+                  <!-- Dynamically rendered -->
+                </div>
+
+              </main>
+
+            </div>
+
+            <!-- Windows Status Bar -->
+            <footer class="win-status-bar">
+              <div class="win-status-left">
+                <span id="win-status-item-count"><i class="ph ph-files"></i> 0 items</span>
+                <span class="win-status-sep">|</span>
+                <span id="win-status-selected-count" style="display:none;"><i class="ph ph-check-square"></i> 0 selected
+                  (0 KB)</span>
+              </div>
+              <div class="win-status-right">
+                <span id="win-status-storage-info"><i class="ph ph-hard-drive"></i> 0 GB used / 0 GB total</span>
+              </div>
+            </footer>
+
+          </div>
+        </section>
+
+        <!-- Panel 3: Transfer Studio -->
+        <section class="view-panel" id="panel-transfers">
+          <div class="dashboard-grid">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title"><i class="ph ph-arrows-left-right" style="color: var(--accent-purple);"></i>
+                  Cross-Cloud Transfer Studio</h1>
+                <p class="section-subtitle">Migrate and sync files directly between Google Drive, AWS S3, Dropbox, and
+                  OneDrive.</p>
+              </div>
+            </div>
+
+            <div class="transfer-studio-grid">
+              <div class="transfer-source-box">
+                <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;"><i
+                    class="ph ph-upload-simple" style="color: var(--accent-cyan);"></i> Transfer Pipeline Setup</h3>
+
+                <div class="form-group">
+                  <label class="form-label">Select File to Migrate</label>
+                  <select class="form-input" id="transfer-file-select">
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div class="form-group">
+                    <label class="form-label">Source Provider</label>
+                    <select class="form-input" id="transfer-source-select">
+                      <!-- Populated dynamically -->
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Destination Provider</label>
+                    <select class="form-input" id="transfer-dest-select">
+                      <!-- Populated dynamically -->
+                    </select>
+                  </div>
+                </div>
+
+                <div class="transfer-action-center">
+                  <button class="transfer-launch-btn" id="launch-transfer-btn">
+                    <i class="ph ph-paper-plane-right"></i> Start Cloud Migration
+                  </button>
+                </div>
+              </div>
+
+              <div class="glass-panel">
+                <h3 class="section-title" style="font-size: 1.1rem; margin-bottom: 1rem;"><i class="ph ph-queue"
+                    style="color: var(--accent-blue);"></i> Active & Completed Migration Queue</h3>
+                <div class="transfer-queue-list" id="transfer-queue-container">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel 4: Cloud Accounts -->
+        <section class="view-panel" id="panel-accounts">
+          <div class="dashboard-grid">
+            <div class="section-header"
+              style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h1 class="section-title"><i class="ph ph-cloud-check" style="color: var(--accent-emerald);"></i> Cloud
+                  Accounts Center</h1>
+                <p class="section-subtitle">Manage OAuth API tokens, access credentials, and cloud storage quotas.</p>
+              </div>
+              <button class="btn-primary"
+                onclick="document.getElementById('add-provider-modal').classList.add('active');"
+                style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-plus-circle"></i> Connect Cloud Account
+              </button>
+            </div>
+
+            <div class="glass-panel">
+              <table class="files-list-table">
+                <thead>
+                  <tr>
+                    <th>Provider Name</th>
+                    <th>Account Identifier</th>
+                    <th>Region / Node</th>
+                    <th>Quota Usage</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="accounts-table-body">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel 5: Security Vault -->
+        <section class="view-panel" id="panel-security">
+          <div class="dashboard-grid">
+            <div class="section-header">
+              <div>
+                <h1 class="section-title"><i class="ph ph-shield-check" style="color: var(--accent-pink);"></i>
+                  Zero-Knowledge Security Vault</h1>
+                <p class="section-subtitle">Client-side AES-256 encryption status, key management, and security logs.
+                </p>
+              </div>
+            </div>
+
+            <div class="analytics-grid">
+              <div class="glass-panel" style="display: flex; flex-direction: column; gap: 1rem;">
+                <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;"><i
+                    class="ph ph-lock-key" style="color: var(--accent-cyan);"></i> Encryption Health Status</h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">
+                  All sensitive files stored in your <strong>MEGA Encrypted</strong> and <strong>AWS S3</strong>
+                  accounts are protected using client-side AES-256 encryption before upload.
+                </p>
+                <div
+                  style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-emerald); padding: 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 1rem;">
+                  <i class="ph ph-shield-check" style="font-size: 2rem; color: var(--accent-emerald);"></i>
+                  <div>
+                    <h4 style="font-size: 0.95rem; color: var(--text-main);">Zero-Knowledge Standard Active</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-dim);">Keys are kept exclusively on your local
+                      device.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-panel">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem;"><i class="ph ph-notebook"
+                    style="color: var(--accent-amber);"></i> Access Audit Log</h3>
+                <ul
+                  style="list-style: none; font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.6rem; color: var(--text-muted);">
+                  <li><i class="ph ph-check" style="color: var(--accent-emerald);"></i> Encrypted vault unlocked via
+                    WebCrypto API</li>
+                  <li><i class="ph ph-check" style="color: var(--accent-emerald);"></i> Transferred file to AWS S3
+                    bucket with SSL</li>
+                  <li><i class="ph ph-check" style="color: var(--accent-emerald);"></i> Public link generated with 24h
+                    expiration</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- File Context Menu -->
+  <div class="context-menu" id="file-context-menu">
+    <div class="context-item" id="ctx-share"><i class="ph ph-share-network"></i> Share File</div>
+    <div class="context-item" id="ctx-download"><i class="ph ph-download-simple"></i> Download</div>
+    <div class="context-divider"></div>
+    <div class="context-item danger" id="ctx-delete"><i class="ph ph-trash"></i> Delete</div>
+  </div>
+
+  <!-- Modal 1: Preview Modal -->
+  <div class="modal-overlay" id="preview-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="preview-modal-title">File Preview</h3>
+        <i class="ph ph-x modal-close"></i>
+      </div>
+      <div class="modal-body" id="preview-modal-body">
+        <!-- Dynamic Preview Content -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary modal-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Connect Cloud Account -->
+  <div class="modal-overlay" id="add-provider-modal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="ph ph-cloud" style="color:var(--accent-cyan);"></i>
+          Connect Cloud Storage
+        </h3>
+        <i class="ph ph-x modal-close"></i>
+      </div>
+      <form id="add-provider-form">
+        <div class="modal-body" style="gap: 1rem;">
+
+          <!-- Provider selector -->
+          <div class="form-group">
+            <label class="form-label">Select Cloud Service</label>
+            <select class="form-input" id="provider-type-select"
+              style="padding: 0.85rem 1rem; font-size: 0.95rem; font-weight: 500;">
+              <option value="gdrive">🟦 Google Drive (15 GB Cloud)</option>
+              <option value="dropbox">📦 Dropbox (2 GB Storage)</option>
+              <option value="onedrive">🪟 Microsoft OneDrive (5 GB)</option>
+              <option value="local_disk">💻 Local Computer Hard Drive</option>
+              <option value="aws_s3">🟠 AWS S3 Cloud Bucket</option>
+            </select>
+          </div>
+
+          <!-- Account label -->
+          <div class="form-group">
+            <label class="form-label">Account Label</label>
+            <input type="text" class="form-input" id="provider-name-input" value="Google Drive (My Account)"
+              placeholder="Account Name" />
+          </div>
+
+          <!-- Account Email / Identifier -->
+          <div class="form-group">
+            <label class="form-label">Account Identifier / Email</label>
+            <input type="text" class="form-input" id="provider-user-input"
+              placeholder="e.g. user@gmail.com, myaccount@outlook.com, bucket-name" />
+          </div>
+
+          <!-- Sign-In Button (shown for cloud providers) -->
+          <div id="cloud-signin-section">
+            <button type="button" id="oauth-popup-btn" style="
+              width: 100%; display: flex; align-items: center; gap: 0.85rem;
+              padding: 0.85rem 1.1rem; border-radius: var(--radius-md);
+              background: var(--bg-tertiary); border: 1px solid var(--border-color);
+              cursor: pointer; transition: all 0.2s; color: var(--text-main);
+            " onmouseover="this.style.borderColor='#4285f4'; this.style.background='rgba(66,133,244,0.08)'"
+              onmouseout="this.style.borderColor=''; this.style.background='var(--bg-tertiary)'">
+              <div id="signin-provider-icon"
+                style="width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+                <i class="ph ph-google-logo" id="oauth-popup-icon" style="font-size: 1.25rem; color: #4285f4;"></i>
+              </div>
+              <div style="flex: 1; text-align: left;">
+                <div id="oauth-popup-label" style="font-size: 0.95rem; font-weight: 600;">Sign in with Google</div>
+                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 1px;">Click to authenticate your
+                  account</div>
+              </div>
+              <i class="ph ph-arrow-right" style="color: var(--text-dim); font-size: 1rem;"></i>
+            </button>
+
+            <!-- Auth success banner (shown after sign-in) -->
+            <div id="oauth-token-status" style="display: none; margin-top: 0.6rem;
+              background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3);
+              border-radius: var(--radius-sm); padding: 0.6rem 0.9rem;
+              font-size: 0.82rem; color: #10b981; align-items: center; gap: 0.6rem;">
+              <i class="ph ph-check-circle" style="font-size: 1.2rem; flex-shrink: 0;"></i>
+              <div id="oauth-token-status-text" style="font-weight: 600;">Account connected!</div>
+            </div>
+          </div>
+
+          <!-- Capacity Preview -->
+          <div
+            style="background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-gauge" style="color: var(--accent-cyan); font-size: 1.2rem;"></i>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Auto-Detected Storage
+                  Allocation</span>
+              </div>
+              <span id="quota-status-text"
+                style="font-size: 0.75rem; color: var(--accent-emerald); font-weight: 600;">Ready to Link</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div
+                style="background: var(--bg-card); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.7rem; color: var(--text-dim);">Total Capacity</div>
+                <input type="number" step="0.1" class="form-input" id="provider-storage-input" value="15.0" readonly
+                  style="border: none; padding: 0; background: transparent; color: var(--accent-cyan); font-weight: 700; font-size: 1.1rem; width: 100%; margin-top: 2px;" />
+              </div>
+              <div
+                style="background: var(--bg-card); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.7rem; color: var(--text-dim);">Used Space</div>
+                <input type="number" step="0.01" class="form-input" id="provider-used-input" value="4.25" readonly
+                  style="border: none; padding: 0; background: transparent; color: var(--accent-emerald); font-weight: 700; font-size: 1.1rem; width: 100%; margin-top: 2px;" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Hidden token input for state -->
+          <input type="hidden" id="provider-token-input" value="mock_gdrive_auth" />
+
+        </div>
+
+        <div class="modal-footer" style="padding-top: 0.5rem;">
+          <button type="button" class="btn-secondary modal-cancel">Cancel</button>
+          <button type="submit" class="btn-primary" id="connect-submit-btn"
+            style="padding: 0.85rem 1.5rem; font-size: 0.95rem; background: var(--accent-cyan); border-color: var(--accent-cyan); color: #000; font-weight: 700;">
+            <i class="ph ph-plug"></i> <span id="connect-submit-label">Connect &amp; Import Files</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Firebase Setup (one-time) -->
+  <div class="modal-overlay" id="firebase-setup-modal">
+    <div class="modal-card" style="max-width:500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="ph ph-fire" style="color:#f59e0b;"></i>
+          Firebase One-Time Setup
+        </h3>
+        <i class="ph ph-x modal-close"></i>
+      </div>
+      <div class="modal-body">
+
+        <div style="background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2);
+          border-radius:var(--radius-sm); padding:0.85rem 1rem; font-size:0.8rem;
+          color:var(--text-muted); line-height:1.8; margin-bottom:0.5rem;">
+          <strong style="color:var(--accent-amber);">Why Firebase?</strong><br>
+          Firebase handles Google &amp; Microsoft OAuth for you — no registering apps, no copying Client IDs.
+          It's <strong>free</strong> and takes about 3 minutes to set up once.
+        </div>
+
+        <div style="font-size:0.82rem; color:var(--text-muted); line-height:1.9; margin-bottom:1rem;">
+          <ol style="margin:0; padding-left:1.2rem;">
+            <li>Go to <a href="https://console.firebase.google.com" target="_blank"
+                style="color:var(--accent-cyan);">console.firebase.google.com</a> → <strong>Create project</strong></li>
+            <li>Click <strong>Add app</strong> → choose <strong>Web (&lt;/&gt;)</strong></li>
+            <li>Copy the <code
+                style="color:var(--accent-cyan); background:rgba(0,242,254,0.08); padding:1px 4px; border-radius:3px;">firebaseConfig</code>
+              object shown</li>
+            <li>In <strong>Authentication → Sign-in method</strong>, enable <strong>Google</strong> and/or
+              <strong>Microsoft</strong>
+            </li>
+            <li>Add <code
+                style="color:var(--accent-cyan); background:rgba(0,242,254,0.08); padding:1px 4px; border-radius:3px;">http://localhost:8080</code>
+              to <strong>Authorized domains</strong></li>
+            <li>Paste your config below ↓</li>
+          </ol>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="ph ph-code" style="color:var(--accent-cyan);"></i>
+            Paste Firebase Config (JSON or SDK snippet)
+          </label>
+          <textarea class="form-input" id="firebase-config-input" rows="7" placeholder='Paste the firebaseConfig object here, e.g.:
+{
+  "apiKey": "AIzaSy...",
+  "authDomain": "your-app.firebaseapp.com",
+  "projectId": "your-app",
+  "storageBucket": "your-app.appspot.com",
+  "messagingSenderId": "12345...",
+  "appId": "1:12345...:web:abc123"
+}' style="font-family:monospace; font-size:0.8rem; resize:vertical;"></textarea>
+          <div id="firebase-config-error"
+            style="display:none; color:var(--accent-pink); font-size:0.75rem; margin-top:0.4rem;"></div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary modal-cancel">Cancel</button>
+        <button type="button" class="btn-primary" id="save-firebase-config-btn">
+          <i class="ph ph-floppy-disk"></i> Save & Activate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Share Modal -->
+  <div class="modal-overlay" id="share-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="ph ph-share-network" style="color: var(--accent-cyan);"></i> Share Secure Link
+        </h3>
+        <i class="ph ph-x modal-close"></i>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Anyone with this encrypted link can view and download
+          this file.</p>
+        <div class="form-group">
+          <input type="text" class="form-input" id="share-url-input" readonly />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="copy-share-url-btn"><i class="ph ph-copy"></i> Copy Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Interactive Google / Cloud Sign In -->
+  <div class="modal-overlay" id="oauth-modal" style="z-index: 1000;">
+    <div class="modal-card"
+      style="max-width: 420px; border: 1px solid rgba(66, 133, 244, 0.4); box-shadow: 0 10px 40px rgba(66, 133, 244, 0.15);">
+      <div class="modal-header"
+        style="border-bottom: none; padding-bottom: 0.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem;">
+        <div
+          style="width: 48px; height: 48px; border-radius: 50%; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; font-size: 1.6rem;">
+          <i class="ph ph-google-logo" id="oauth-modal-header-icon" style="color: #4285f4;"></i>
+        </div>
+        <h3 class="modal-title" id="oauth-modal-title" style="margin: 0; font-size: 1.2rem;">Sign in with Google</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">to continue to <strong>OmniCloud</strong></p>
+        <i class="ph ph-x modal-close" style="position: absolute; right: 1.25rem; top: 1.25rem;"></i>
+      </div>
+      <div class="modal-body" style="text-align: center; padding-top: 0.5rem;">
+
+        <!-- Step 1: Email -->
+        <div id="oauth-step-1">
+          <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
+            <label class="form-label">Email or Phone</label>
+            <input type="email" class="form-input" id="oauth-email-input" placeholder="user.drive@gmail.com"
+              style="padding: 0.85rem 1rem; font-size: 0.95rem;" />
+          </div>
+          <button type="button" class="btn-primary" id="oauth-next-btn"
+            style="width: 100%; padding: 0.85rem; font-size: 0.95rem; background: #4285f4; border-color: #4285f4;">
+            Next <i class="ph ph-arrow-right"></i>
+          </button>
+
+          <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px dashed var(--border-color);">
+            <button type="button" id="oauth-quick-fill-btn"
+              style="background: none; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.45rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.78rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i class="ph ph-lightning" style="color: var(--accent-cyan);"></i> Quick Demo Sign-In
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Password -->
+        <div id="oauth-step-2" style="display: none;">
+          <div
+            style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.25rem; font-size: 0.85rem; color: var(--text-main); background: var(--bg-tertiary); padding: 0.5rem 0.85rem; border-radius: 2rem; border: 1px solid var(--border-color);">
+            <i class="ph ph-user-circle" style="color: var(--accent-cyan); font-size: 1.1rem;"></i>
+            <span id="oauth-user-display" style="font-weight: 600;"></span>
+          </div>
+          <div class="form-group" style="text-align: left; margin-bottom: 1.25rem;">
+            <label class="form-label">Enter your password</label>
+            <input type="password" class="form-input" id="oauth-password-input" placeholder="Password"
+              style="padding: 0.85rem 1rem;" />
+          </div>
+          <button type="button" class="btn-primary" id="oauth-login-btn"
+            style="width: 100%; padding: 0.85rem; font-size: 0.95rem; background: #4285f4; border-color: #4285f4;">
+            Sign In <i class="ph ph-sign-in"></i>
+          </button>
+        </div>
+
+        <!-- Step 3: Permissions Approval -->
+        <div id="oauth-step-3" style="display: none; text-align: left;">
+          <div
+            style="background: rgba(0, 242, 254, 0.04); border: 1px solid rgba(0, 242, 254, 0.15); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+            <h4 style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 0.75rem; font-weight: 600;">
+              OmniCloud wants to access your account
+            </h4>
+            <ul
+              style="list-style: none; padding: 0; font-size: 0.82rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.5rem; margin: 0;">
+              <li style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-check-circle" style="color: var(--accent-emerald); font-size: 1.1rem;"></i>
+                <span>View and manage your files &amp; folders</span>
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-check-circle" style="color: var(--accent-emerald); font-size: 1.1rem;"></i>
+                <span>Detect your real cloud storage quota</span>
+              </li>
+            </ul>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <button type="button" class="btn-secondary modal-cancel" style="flex: 1; padding: 0.75rem;">Cancel</button>
+            <button type="button" class="btn-primary" id="oauth-allow-btn"
+              style="flex: 1; background: var(--accent-emerald); border-color: var(--accent-emerald); color: #fff; font-weight: 600; padding: 0.75rem;">
+              <i class="ph ph-check"></i> Allow &amp; Connect
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Sign In / Sign Up -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-card" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="auth-modal-title">
+          <i class="ph ph-user-circle" style="color:var(--accent-cyan);"></i>
+          <span id="auth-modal-title-text">Sign In to OmniCloud</span>
+        </h3>
+        <i class="ph ph-x modal-close"></i>
+      </div>
+      <div class="modal-body">
+
+        <!-- Tab switcher -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="auth-tab-signin">Sign In</button>
+          <button class="auth-tab" id="auth-tab-signup">Create Account</button>
+        </div>
+
+        <!-- Sign In Panel -->
+        <div id="auth-panel-signin">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" id="signin-email" placeholder="your@email.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="signin-password" placeholder="Your password" />
+          </div>
+          <div class="auth-hint" id="signin-error"
+            style="display:none; color:var(--accent-pink); font-size:0.8rem; margin-bottom:0.5rem;"></div>
+        </div>
+
+        <!-- Sign Up Panel -->
+        <div id="auth-panel-signup" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="signup-name" placeholder="John Doe" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" id="signup-email" placeholder="your@email.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="signup-password" placeholder="Min 6 characters" />
+          </div>
+          <div class="auth-hint" id="signup-error"
+            style="display:none; color:var(--accent-pink); font-size:0.8rem; margin-bottom:0.5rem;"></div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary modal-cancel">Cancel</button>
+        <button class="btn-primary" id="auth-submit-btn">
+          <i class="ph ph-sign-in"></i> <span id="auth-submit-label">Sign In</span>
+          <!-- Modal: Windows File Properties Dialog (Alt+Enter) -->
+          <div class="modal-overlay" id="win-properties-modal" style="z-index: 1100;">
+            <div class="modal-card" style="max-width: 440px; padding: 0; overflow: hidden;">
+              <div class="modal-header"
+                style="background: var(--bg-tertiary); padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color);">
+                <h3 class="modal-title" style="font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="ph ph-file-text" id="prop-file-icon"
+                    style="color: var(--accent-cyan); font-size: 1.3rem;"></i>
+                  <span id="prop-title-name">File Properties</span>
+                </h3>
+                <i class="ph ph-x modal-close"></i>
+              </div>
+
+              <div class="win-prop-tabs">
+                <button type="button" class="win-prop-tab active" data-tab="general">General</button>
+                <button type="button" class="win-prop-tab" data-tab="cloud">Cloud &amp; Security</button>
+                <button type="button" class="win-prop-tab" data-tab="details">Details</button>
+              </div>
+
+              <div class="modal-body" style="padding: 1.25rem; font-size: 0.85rem; line-height: 1.6;">
+
+                <!-- Tab 1: General -->
+                <div class="win-prop-tab-content active" id="prop-tab-general">
+                  <div
+                    style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
+                    <div id="prop-big-icon" style="font-size: 2.5rem; color: var(--accent-cyan);">📁</div>
+                    <div style="flex: 1; overflow: hidden;">
+                      <input type="text" class="form-input" id="prop-input-name"
+                        style="font-weight: 600; font-size: 0.95rem; padding: 0.4rem 0.6rem;" />
+                    </div>
+                  </div>
+
+                  <div class="win-prop-grid">
+                    <div class="win-prop-label">Type of file:</div>
+                    <div class="win-prop-value" id="prop-file-type">Document (.docx)</div>
+
+                    <div class="win-prop-label">Location:</div>
+                    <div class="win-prop-value" id="prop-file-location" style="word-break: break-all;">/My
+                      Drive/Documents/</div>
+
+                    <div class="win-prop-label">Size:</div>
+                    <div class="win-prop-value" id="prop-file-size">3.45 MB (3,450,000 bytes)</div>
+
+                    <div class="win-prop-label">Cloud Service:</div>
+                    <div class="win-prop-value" id="prop-file-provider">Google Drive</div>
+
+                    <div class="win-prop-label">Created:</div>
+                    <div class="win-prop-value" id="prop-file-created">Today</div>
+
+                    <div class="win-prop-label">Modified:</div>
+                    <div class="win-prop-value" id="prop-file-modified">Just now</div>
+                  </div>
+                </div>
+
+                <!-- Tab 2: Cloud & Security -->
+                <div class="win-prop-tab-content" id="prop-tab-cloud" style="display: none;">
+                  <div class="win-prop-grid">
+                    <div class="win-prop-label">Cloud Provider:</div>
+                    <div class="win-prop-value" id="prop-cloud-provider">Google Drive (Connected)</div>
+
+                    <div class="win-prop-label">Sync Status:</div>
+                    <div class="win-prop-value" style="color: var(--accent-emerald); font-weight: 600;"><i
+                        class="ph ph-check-circle"></i> Synced &amp; Protected</div>
+
+                    <div class="win-prop-label">Encryption:</div>
+                    <div class="win-prop-value" id="prop-cloud-encrypted">AES-256 (Cloud Server-Side)</div>
+
+                    <div class="win-prop-label">Permissions:</div>
+                    <div class="win-prop-value">Owner Read &amp; Write (Full Control)</div>
+
+                    <div class="win-prop-label">Favorite / Star:</div>
+                    <div class="win-prop-value" id="prop-cloud-starred">No</div>
+                  </div>
+                </div>
+
+                <!-- Tab 3: Details -->
+                <div class="win-prop-tab-content" id="prop-tab-details" style="display: none;">
+                  <div class="win-prop-grid">
+                    <div class="win-prop-label">File ID:</div>
+                    <div class="win-prop-value" id="prop-detail-id" style="font-family: monospace; font-size: 0.75rem;">
+                      -</div>
+
+                    <div class="win-prop-label">MIME Type:</div>
+                    <div class="win-prop-value" id="prop-detail-mime"
+                      style="font-family: monospace; font-size: 0.75rem;">-</div>
+
+                    <div class="win-prop-label">File Checksum:</div>
+                    <div class="win-prop-value" id="prop-detail-hash"
+                      style="font-family: monospace; font-size: 0.72rem; word-break: break-all;">SHA-256 Verified</div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="modal-footer" style="background: var(--bg-tertiary); padding: 0.75rem 1.25rem;">
+                <button type="button" class="btn-secondary modal-cancel" style="padding: 0.45rem 1rem;">Cancel</button>
+                <button type="button" class="btn-primary" id="prop-save-btn"
+                  style="padding: 0.45rem 1.2rem;">OK</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal: Windows New Folder Dialog -->
+          <div class="modal-overlay" id="win-new-folder-modal" style="z-index: 1100;">
+            <div class="modal-card" style="max-width: 380px;">
+              <div class="modal-header">
+                <h3 class="modal-title" style="font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="ph ph-folder-plus" style="color: var(--accent-cyan);"></i> Create New Folder
+                </h3>
+                <i class="ph ph-x modal-close"></i>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label class="form-label">Folder Name</label>
+                  <input type="text" class="form-input" id="win-new-folder-name" value="New folder"
+                    placeholder="Folder name" />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn-secondary modal-cancel">Cancel</button>
+                <button type="button" class="btn-primary" id="win-create-folder-submit-btn"><i class="ph ph-check"></i>
+                  Create</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal: Python Backend Info -->
+          <div class="modal-overlay" id="backend-info-modal" style="z-index: 1200;">
+            <div class="modal-card" style="max-width: 520px;">
+              <div class="modal-header">
+                <h3 class="modal-title" style="display: flex; align-items: center; gap: 0.6rem; font-size: 1.15rem;">
+                  <span style="font-size: 1.4rem;">🐍</span> OmniCloud Python Backend
+                </h3>
+                <i class="ph ph-x modal-close"></i>
+              </div>
+              <div class="modal-body">
+                <div
+                  style="background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
+                  <div
+                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 600; color: #fff;">Server Engine</span>
+                    <span class="badge"
+                      style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;"
+                      id="backend-modal-status">ACTIVE</span>
+                  </div>
+                  <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.4;">
+                    Powered by Python (Flask REST API + SQLite WAL + Disk File System). Provides real binary file
+                    upload, real cross-cloud migration queue, and persistent database storage.
+                  </p>
+                </div>
+
+                <div class="win-prop-grid"
+                  style="grid-template-columns: 140px 1fr; gap: 0.75rem 1rem; font-size: 0.85rem;">
+                  <div class="win-prop-label">Python Version:</div>
+                  <div class="win-prop-value" id="backend-modal-python" style="font-family: monospace; color: #00f2fe;">
+                    Python 3.11</div>
+
+                  <div class="win-prop-label">API Base URL:</div>
+                  <div class="win-prop-value" id="backend-modal-url" style="font-family: monospace;">
+                    http://localhost:5000/api</div>
+
+                  <div class="win-prop-label">Database:</div>
+                  <div class="win-prop-value" id="backend-modal-db"
+                    style="font-family: monospace; font-size: 0.75rem; word-break: break-all;">backend/data/omnicloud.db
+                  </div>
+
+                  <div class="win-prop-label">Uploads Folder:</div>
+                  <div class="win-prop-value" id="backend-modal-uploads"
+                    style="font-family: monospace; font-size: 0.75rem; word-break: break-all;">backend/data/uploads
+                  </div>
+
+                  <div class="win-prop-label">Server Uptime:</div>
+                  <div class="win-prop-value" id="backend-modal-uptime">0s</div>
+                </div>
+
+                <div
+                  style="margin-top: 1.2rem; background: var(--bg-tertiary); border-radius: 8px; padding: 0.75rem 1rem;">
+                  <div
+                    style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700; margin-bottom: 0.4rem;">
+                    Quick Start / Terminal Command
+                  </div>
+                  <code
+                    style="display: block; font-family: monospace; background: #0a0d14; padding: 0.5rem 0.75rem; border-radius: 6px; color: #00f2fe; font-size: 0.85rem; user-select: all;">
+            python server.py
+          </code>
+                </div>
+              </div>
+              <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <button type="button" class="btn-secondary" id="backend-test-ping-btn"
+                  style="display: flex; align-items: center; gap: 0.4rem;">
+                  <i class="ph ph-arrows-clockwise"></i> Ping Backend
+                </button>
+                <button type="button" class="btn-primary modal-close" style="padding: 0.45rem 1.4rem;">Close</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Toast Container -->
+          <div class="toast-container" id="toast-container"></div>
+
+          <!-- Scripts -->
+          <script src="https://accounts.google.com/gsi/client" async defer></script>
+          <script src="js/mockData.js"></script>
+          <script src="js/api.js"></script>
+          <script src="js/auth.js"></script>
+          <script src="js/firebaseAuth.js"></script>
+          <script src="js/googleAuth.js"></script>
+          <script src="js/storage.js"></script>
+          <script src="js/charts.js"></script>
+          <script src="js/cloudIntegrator.js"></script>
+          <script src="js/fileManager.js"></script>
+          <script src="js/transferEngine.js"></script>
+          <script src="js/app.js"></script>
+</body>
+
+</html>
